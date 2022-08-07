@@ -1,6 +1,5 @@
-version: '3' 
+version: '3'
 services:
-
   namenode:
     image: fjardim/namenode_sqoop
     container_name: namenode
@@ -9,7 +8,7 @@ services:
       - ./data/hdfs/namenode:/hadoop/dfs/name
       - ./input:/input
     environment:
-      - CLUSTER_NAME=test
+      - CLUSTER_NAME=semantix-projeto-covid19
     env_file:
       - ./data/hadoop/hadoop-hive.env
     ports:
@@ -17,15 +16,14 @@ services:
     deploy:
       resources:
         limits:
-          memory: 500m
-  
+          memory: 512m
+
   datanode:
     image: fjardim/datanode
     container_name: datanode
     hostname: datanode
     volumes:
       - ./data/hdfs/datanode:/hadoop/dfs/data
-      #- ./data/hadoop/bank:/bank
     env_file:
       - ./data/hadoop/hadoop-hive.env
     environment:
@@ -37,8 +35,8 @@ services:
     deploy:
       resources:
         limits:
-          memory: 500m
-  
+          memory: 512m
+
   hive-server:
     image: fjardim/hive
     container_name: hive-server
@@ -55,8 +53,8 @@ services:
     deploy:
       resources:
         limits:
-          memory: 500m
-  
+          memory: 512m
+
   hive-metastore:
     image: fjardim/hive
     container_name: hive_metastore
@@ -73,8 +71,8 @@ services:
     deploy:
       resources:
         limits:
-          memory: 500m
-  
+          memory: 512m
+
   hive-metastore-postgresql:
     image: fjardim/hive-metastore
     container_name: hive-metastore-postgresql
@@ -86,28 +84,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 500m
-  
-  database:
-    image: fjardim/mysql
-    container_name: database
-    hostname: database
-    ports:
-        - "33061:3306"
-    deploy:
-      resources:
-        limits:
-          memory: 500m
-    command: mysqld --innodb-flush-method=O_DSYNC --innodb-use-native-aio=OFF --init-file /data/application/init.sql
-    volumes:
-        - ./data/mysql/data:/var/lib/mysql
-        - ./data/mysql/init.sql:/data/application/init.sql
-    environment:
-        MYSQL_ROOT_USER: root
-        MYSQL_ROOT_PASSWORD: secret
-        MYSQL_DATABASE: hue
-        MYSQL_USER: root
-        MYSQL_PASSWORD: secret
+          memory: 512m
 
   zookeeper:
     image: fjardim/zookeeper
@@ -120,29 +97,45 @@ services:
     deploy:
       resources:
         limits:
-          memory: 500m
+          memory: 512m
 
-  hbase-master:
-    image: fjardim/hbase-master
-    container_name: hbase-master
-    hostname: hbase-master
-    env_file:
-      - ./data/hbase/hbase-standalone.env
-    environment:
-      SERVICE_PRECONDITION: "namenode:50070 datanode:50075 zookeeper:2181"
+  kafka:
+    image: fjardim/kafka
+    container_name: kafka
+    hostname: kafka
     ports:
-      - 16010:16010
+      - "9092:9092"
+    volumes:
+      - ./data/kafka:/kafka/kafka-logs-kafka
     depends_on:
-      - namenode
+      - zookeeper
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
     deploy:
       resources:
         limits:
-          memory: 500m
+          memory: 512m
+          
+  kafkamanager:
+    image: fjardim/kafkamanager
+    container_name: kafkamanager
+    hostname: kafkamanager
+    environment: 
+      ZK_HOSTS: zookeeper:2181
+    ports:
+      - 9000:9000
+    depends_on:
+      - kafka
+    deploy:
+      resources:
+        limits:
+          memory: 256m
 
-  spark:
+  jupyter-spark:
     image: fjardim/jupyter-spark
-    hostname: spark
-    container_name: spark
+    hostname: jupyter-spark
+    container_name: jupyter-spark
     command: notebook
     env_file:
       - ./data/jupyter/jupyter.env
@@ -153,10 +146,10 @@ services:
       - 4042:4042
       - 4043:4043
     volumes:
-       - ./data/notebooks:/mnt/notebooks/
+        - ./data/notebooks:/mnt/notebooks/
     environment:
-       SPARK_MASTER: local[*]
-       JUPYTER_PORT: 8889
+        SPARK_MASTER: local[*]
+        JUPYTER_PORT: 8889
     deploy:
       resources:
         limits:
