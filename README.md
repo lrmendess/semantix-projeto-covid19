@@ -30,10 +30,10 @@ docker-compose start
 
 Para acessar o jupyter notebook, utilize a url: [http://localhost:8889](http://localhost:8889)
 
-## 🦄 Desenvolvimento
->Obs: Era de interesse desenvolver o projeto utilizando structured streaming e dar mais atenção para a estética dos resultados, assim como melhor automatizar os processos. Por contratempos da vida, não consegui tempo para terminar o projeto como gostaria até 08/08/2022 (prazo final). Porém como foi de grande aproveitamento, resolvi publicar mesmo assim.
+## 🦄 Desenvolvimento e Resultados
+>Obs: Era de interesse desenvolver o projeto utilizando structured streaming e dar mais atenção para a estética dos resultados, assim como melhor automatizar os processos. Por contratempos da vida, não consegui tempo para terminar o projeto como gostaria até 08/08/2022 (prazo final). Porém como foi de grande aproveitamento, resolvi publicar mesmo assim. Quem sabe um dia saia algo mais interessante daqui :wink:.
 
-Todo o projeto foi desenvolvido utilizando o jupyter, através do notebook [semantix-projeto-covid19](data/notebooks/semantix-projeto-covid19.ipynb), a qual possui o passo a passo do que foi feito.
+Todo o projeto foi desenvolvido através do jupyter notebook [semantix-projeto-covid19.ipynb](data/notebooks/semantix-projeto-covid19.ipynb), a qual possui todo fluxo de execução e resultados.
 
 Foi utilizado o tópico `covid19-obitos` do Kafka como entrada para o Logstash ([logstash.conf](pipeline/logstash.conf)), tendo como resultado de **Óbitos Confirmados** o seguinte Dashboard:
 
