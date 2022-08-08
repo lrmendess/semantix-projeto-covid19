@@ -105,18 +105,22 @@ services:
     hostname: kafka
     ports:
       - "9092:9092"
+      - "29092:29092"
     volumes:
       - ./data/kafka:/kafka/kafka-logs-kafka
     depends_on:
       - zookeeper
     environment:
-      KAFKA_ADVERTISED_HOST_NAME: kafka
+      KAFKA_LISTENERS: INSIDE://0.0.0.0:29092,OUTSIDE://0.0.0.0:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:29092,OUTSIDE://localhost:9092
+      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
     deploy:
       resources:
         limits:
           memory: 512m
-          
+
   kafkamanager:
     image: fjardim/kafkamanager
     container_name: kafkamanager
@@ -168,9 +172,7 @@ services:
     ulimits:
       memlock:
         soft: -1
-        hard: -1  
-    networks: 
-      - elastic
+        hard: -1
 
   kibana:
     image: docker.elastic.co/kibana/kibana:7.9.2
@@ -179,9 +181,7 @@ services:
     ports:
       - "5601:5601"
     depends_on:
-      - elasticsearch       
-    networks: 
-      - elastic
+      - elasticsearch
   
   logstash:
     image: docker.elastic.co/logstash/logstash:7.9.2
@@ -193,12 +193,7 @@ services:
       - "5044:5044"
     depends_on: 
       - elasticsearch  
-    networks:
-      - elastic        
-
-networks:
-  elastic:
-    driver: bridge
+      - kafka
 
 volumes:
   es-data:
