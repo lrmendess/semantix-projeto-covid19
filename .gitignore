@@ -1,0 +1,7 @@
+data/hdfs
+data/kafka
+data/postgresql
+data/zookeeper
+data/notebooks/.ipynb_checkpoints
+data/notebooks/util
+data/spark-warehouse
