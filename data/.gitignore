@@ -1,0 +1,7 @@
+hdfs
+kafka
+postgresql
+zookeeper
+notebooks/.ipynb_checkpoints
+notebooks/util
+spark-warehouse

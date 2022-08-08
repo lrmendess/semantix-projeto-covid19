@@ -1,0 +1,4 @@
+cluster.name: semantix-projeto-covid19-elastic-cluster
+node.name: node1
+network.host: _site_
+cluster.initial_master_nodes: ["node1"]
